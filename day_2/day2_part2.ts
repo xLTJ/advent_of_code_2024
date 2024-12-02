@@ -21,7 +21,7 @@ function split_input(input: string) {
 
 
 // to check for the part two condition i decided that if the report isnt safe, we just try removing each number in the array until it hopefully returns safe
-// this could definitely be done more efficiently, but i dont care cus the program executes in 6ms anyway <3
+// this could definitely be done more efficiently, but i dont care cus doing it this way takes under 2 min, and the program executes in 6ms anyway <3
 function check_safety_2(report: number[]) {
     if (check_safety(report)) return true;
 

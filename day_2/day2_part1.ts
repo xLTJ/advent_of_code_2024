@@ -5,8 +5,8 @@ function main() {
 
     const reports: number[][] = split_input(input);
 
-    const safe_reports = reports.reduce((count, currentArray) => {
-        return check_safety(currentArray) ? count + 1 : count;
+    const safe_reports = reports.reduce((count, report) => {
+        return check_safety(report) ? count + 1 : count;
     }, 0)
 
     console.log(safe_reports);

@@ -21,8 +21,6 @@ function split_input(input: string) {
 
 
 function check_safety(report: number[]) {
-    if (report[1] === report[0]) return false;
-
     const is_increasing = report[1] > report[0];
 
     return report.every((level, index) => {

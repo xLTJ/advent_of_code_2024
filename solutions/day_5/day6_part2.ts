@@ -75,8 +75,4 @@ function is_order_correct(rule_map: RuleMap, update: number[]): boolean {
     return true
 }
 
-
-
-
-
 main();

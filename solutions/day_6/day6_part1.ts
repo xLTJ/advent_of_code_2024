@@ -25,6 +25,7 @@ interface Guard {
 }
 
 function main () {
+    console.time('timer');
     const input = fs.readFileSync('./input.txt', 'utf-8');
     const map: string[][] = parse_input(input);
 
@@ -36,6 +37,7 @@ function main () {
     const passed_coordinates: Set<string> = simulate_guard_path(map, guard);
 
     console.log(passed_coordinates.size)
+    console.timeEnd('timer') // 6.512 ms :pray:
 }
 
 

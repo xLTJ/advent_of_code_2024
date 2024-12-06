@@ -37,7 +37,7 @@ function main () {
     const passed_coordinates: Set<string> = simulate_guard_path(map, guard);
 
     console.log(passed_coordinates.size)
-    console.timeEnd('timer') // 10.8s ;~;
+    console.timeEnd('timer') // 6.512 ms :pray:
 }
 
 

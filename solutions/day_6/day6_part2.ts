@@ -34,7 +34,7 @@ function main () {
     let result = 0;
 
     for (const [row_index, row] of map.entries()) {
-        for (const [col_index, col] of row.entries()) {
+        for (const [col_index] of row.entries()) {
             if (map[row_index][col_index] === '#') continue;
 
             let guard: Guard = {
@@ -49,7 +49,7 @@ function main () {
     }
 
     console.log(result);
-    console.timeEnd('timer') // 6.512 ms :pray:
+    console.timeEnd('timer') // 10.8s ;~;
 }
 
 

@@ -33,23 +33,23 @@ function main () {
 
     let result = 0;
 
-    for (const [row_index, row] of map.entries()) {
-        for (const [col_index] of row.entries()) {
-            if (map[row_index][col_index] === '#') continue;
+    const guard_path: Set<string> = simulate_guard_path(map, {coordinates: {...guard_start_location}, direction: Direction.Up});
 
-            let guard: Guard = {
-                coordinates: {...guard_start_location},
-                direction: Direction.Up,
-            }
+    for (const coordinate_string of guard_path) {
+        const coordinates = coordinate_string.split(',').map(Number);
 
-            map_copy[row_index][col_index] = '#';
-            result += does_guard_loop(map_copy, guard) ? 1 : 0;
-            map_copy[row_index][col_index] = '.';
+        let guard: Guard = {
+            coordinates: {...guard_start_location},
+            direction: Direction.Up,
         }
+
+        map_copy[coordinates[1]][coordinates[0]] = '#';
+        result += does_guard_loop(map_copy, guard, false) ? 1 : 0;
+        map_copy[coordinates[1]][coordinates[0]] = '.';
     }
 
     console.log(result);
-    console.timeEnd('timer') // 10.8s ;~;
+    console.timeEnd('timer') // 2.613s lol
 }
 
 
@@ -71,6 +71,64 @@ function get_guard_location(map: string[][]): Coordinate {
 }
 
 
+function simulate_guard_path(map: string[][], guard: Guard): Set<string> {
+    const passed_coordinates = new Set<string>(); // passed coordinates are stored in a set
+    let safety_counter = 0; // just so we dont get an infinite loop
+
+    while (safety_counter < 100000) {
+        safety_counter++;
+        let next_coordinate = get_next_coordinate(guard);
+
+        // if next coordinate is out of bounds, end loop
+        if (is_coordinate_out_of_bounds(map, next_coordinate)) {
+            break;
+        }
+
+        // if theres an obstacle, turn right. otherwise move the guard and add the coordinate.
+        if (map[next_coordinate.y][next_coordinate.x] === '#') {
+            guard.direction = turn_right(guard);
+        } else {
+            guard.coordinates = next_coordinate;
+            passed_coordinates.add(`${guard.coordinates.x},${guard.coordinates.y}`);
+        }
+    }
+
+    if (safety_counter >= 100000) {
+        console.log("Max iterations reached, something probably went wrong ;~;");
+    }
+
+    return passed_coordinates;
+}
+
+
+function turn_right(guard: Guard): Direction {
+    return (guard.direction + 1) % 4 as Direction;
+}
+
+
+function get_next_coordinate(guard: Guard): Coordinate {
+    const direction_vector = direction_vectors[guard.direction];
+    return {
+        x: guard.coordinates.x + direction_vector.x,
+        y: guard.coordinates.y +  direction_vector.y,
+    }
+}
+
+
+function is_coordinate_out_of_bounds(map: string[][], coordinate: Coordinate): boolean {
+    if (coordinate.y < 0 || coordinate.y >= map.length) return true; // check if y is out of bounds
+
+    return (coordinate.x < 0 || coordinate.x >= map[coordinate.y].length); // if not check if x is out of bounds
+}
+
+
+// Part 2 stuff ----------------------------------------------------------------------------------------------------
+function create_map_copy(map: string[][]): string[][] {
+    return map.map(row => [...row]);
+}
+
+
+// this is basically just the simulate path function but i cant be bothered to create a shared helper function so lol
 function does_guard_loop(map: string[][], guard: Guard): boolean {
     const passed_coordinates = new Set<string>();
     let safety_counter = 0; // just so we dont get an infinite loop
@@ -103,33 +161,5 @@ function does_guard_loop(map: string[][], guard: Guard): boolean {
 
     return false;
 }
-
-
-function turn_right(guard: Guard): Direction {
-    return (guard.direction + 1) % 4 as Direction;
-}
-
-
-function get_next_coordinate(guard: Guard): Coordinate {
-    const direction_vector = direction_vectors[guard.direction];
-    return {
-        x: guard.coordinates.x + direction_vector.x,
-        y: guard.coordinates.y +  direction_vector.y,
-    }
-}
-
-
-function is_coordinate_out_of_bounds(map: string[][], coordinate: Coordinate): boolean {
-    if (coordinate.y < 0 || coordinate.y >= map.length) return true; // check if y is out of bounds
-
-    return (coordinate.x < 0 || coordinate.x >= map[coordinate.y].length); // if not check if x is out of bounds
-}
-
-
-// Part 2 stuff ----------------------------------------------------------------------------------------------------
-function create_map_copy(map: string[][]): string[][] {
-    return map.map(row => [...row]);
-}
-
 
 main()
